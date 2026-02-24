@@ -30,11 +30,11 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
-            imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+            fontSrc: ["'self'", "data:", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+            imgSrc: ["'self'", "data:", "https:", "http:"],
+            connectSrc: ["'self'", "https://api.openai.com", "https://generativelanguage.googleapis.com"],
         },
     },
 }));
@@ -60,6 +60,11 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Health Check Route
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'UP', timestamp: new Date(), uptime: process.uptime() });
+});
+
 // ============================================
 // Routes
 // ============================================
@@ -77,10 +82,18 @@ app.use(errorHandler);
 // Database Connection & Server Start
 // ============================================
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log('✅ Connected to MongoDB successfully');
-        app.listen(PORT, () => {
-            console.log(`🤖 DarkBot server running on http://localhost:${PORT}`);
+    .then((conn) => {
+        console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+        const server = app.listen(PORT, () => {
+            console.log(`🤖 DarkBot is live!`);
+            console.log(`📡 Port: ${PORT}`);
+            console.log(`🔗 Mode: ${process.env.NODE_ENV || 'development'}`);
+        });
+
+        // Handle unhandled promise rejections
+        process.on('unhandledRejection', (err) => {
+            console.error(`❌ Unhandled Rejection: ${err.message}`);
+            server.close(() => process.exit(1));
         });
     })
     .catch((err) => {

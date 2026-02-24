@@ -97,22 +97,46 @@
             </div>
 
             <div class="sidebar-footer">
+                <!-- User Profile Trigger -->
                 <div class="sidebar-user" id="userProfileBtn">
-                    <div class="sidebar-user-avatar" id="userAvatar">
+                    <div class="sidebar-user-avatar" id="sidebarAvatar">
                         <%= user.name.charAt(0).toUpperCase() %>
                     </div>
                     <div class="sidebar-user-info">
-                        <span class="sidebar-user-name"><%= user.name %></span>
-                        <span class="sidebar-user-email"><%= user.email %></span>
+                        <span class="sidebar-user-name" id="sidebarUserName"><%= user.name %></span>
+                        <span class="sidebar-user-email" id="sidebarUserEmail"><%= user.email %></span>
                     </div>
                     <i class="fas fa-ellipsis sidebar-user-menu-icon"></i>
                 </div>
                 
-                <!-- User Profile Dropdown -->
+                <!-- User Profile Dropdown (ChatGPT Style) -->
                 <div class="user-dropdown" id="userDropdown">
+                    <div class="user-dropdown-header" id="dropdownProfileHeader">
+                        <div class="sidebar-user-avatar" id="dropdownAvatar">
+                            <%= user.name.charAt(0).toUpperCase() %>
+                        </div>
+                        <div class="user-dropdown-info">
+                            <span class="user-dropdown-name" id="dropdownUserName"><%= user.name %></span>
+                            <span class="user-dropdown-email" id="dropdownUserEmail"><%= user.email %></span>
+                        </div>
+                    </div>
+                    <div class="user-dropdown-divider"></div>
+                    <button class="user-dropdown-item" id="upgradePlanBtn">
+                        <i class="fas fa-sparkles text-yellow"></i>
+                        <span>Upgrade plan</span>
+                    </button>
+                    <button class="user-dropdown-item" id="personalizationBtn">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        <span>Personalization</span>
+                    </button>
                     <button class="user-dropdown-item" id="dropdownSettingsBtn">
                         <i class="fas fa-gear"></i>
                         <span>Settings</span>
+                    </button>
+                    <div class="user-dropdown-divider"></div>
+                    <button class="user-dropdown-item">
+                        <i class="fas fa-circle-question"></i>
+                        <span>Help</span>
                     </button>
                     <button class="user-dropdown-item" id="logoutBtn">
                         <i class="fas fa-arrow-right-from-bracket"></i>
@@ -156,8 +180,8 @@
                     <!-- Welcome Screen - ChatGPT Style -->
                     <div class="welcome-screen" id="welcomeScreen">
 
-                        <h1 class="welcome-title-main">What can I help with?</h1>
-                        <div class="welcome-suggestions">
+                        <h1 class="welcome-title-main" style="animation: fadeUp 0.8s ease-out;">What can I help with?</h1>
+                        <div class="welcome-suggestions" style="animation: fadeUp 1s ease-out both;">
                             <button class="suggestion-btn" onclick="setPrompt('Create an image of ')">
                                 <i class="fas fa-image text-green"></i> 
                                 <span>Create image</span>
@@ -256,7 +280,7 @@
         <div class="modal">
             <div class="modal-header">
                 <h3 id="confirmTitle">Confirm Action</h3>
-                <button class="modal-close" onclick="closeModal('confirmModal')">
+                <button class="modal-close" id="closeConfirmBtn">
                     <i class="fas fa-xmark"></i>
                 </button>
             </div>
@@ -270,10 +294,43 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
+    <!-- Edit Profile Modal -->
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal edit-profile-modal">
+            <div class="modal-header">
+                <h3>Edit profile</h3>
+                <button class="modal-close" id="closeEditProfileBtn"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-avatar-section">
+                    <div class="large-avatar" id="modalAvatar">
+                        <%= user.name.charAt(0).toUpperCase() %>
+                    </div>
+                    <button class="avatar-edit-icon"><i class="fas fa-camera"></i></button>
+                </div>
+                
+                <form id="editProfileForm" class="edit-profile-form">
+                    <div class="form-group">
+                        <label>Display name</label>
+                        <input type="text" id="editName" name="name" value="<%= user.name %>" placeholder="Enter display name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="editEmail" name="email" value="<%= user.email %>" placeholder="Enter email">
+                    </div>
+                    <p class="form-help-text">Your profile helps people recognize you. Your name and username are also used across DarkBot.</p>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" onclick="closeModal('editProfileModal')">Cancel</button>
+                        <button type="submit" class="btn-save" id="saveProfileBtn">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="modal-overlay" id="settingsModal">
         <div class="modal modal-settings">
-            <button class="modal-close" onclick="closeModal('settingsModal')">
+            <button class="modal-close" id="closeSettingsBtn" title="Close settings">
                 <i class="fas fa-xmark"></i>
             </button>
             
@@ -307,8 +364,8 @@
                         <span>Security</span>
                     </button>
                     <button class="settings-nav-item" data-tab="account">
-                        <i class="fas fa-user"></i>
-                        <span>Account</span>
+                        <i class="fas fa-user-circle"></i>
+                        <span>Profile</span>
                     </button>
                 </nav>
             </aside>
@@ -462,10 +519,16 @@
                         </div>
                         <div class="settings-row">
                             <div class="settings-info">
+                                <div class="settings-label">Member since</div>
+                                <div class="settings-desc"><%= new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) %></div>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-info">
                                 <div class="settings-label">Log Out</div>
                             </div>
                             <div class="settings-control">
-                                <button class="settings-btn-play" onclick="logout()">
+                                <button class="settings-btn-play" id="settingsLogoutBtn">
                                     <i class="fas fa-right-from-bracket"></i>
                                     <span>Log out</span>
                                 </button>
@@ -788,16 +851,18 @@
             // Remove typing indicator
             removeTypingIndicator();
 
-            if (data.success) {
+                if (data.success) {
                 currentChatId = data.chatId;
 
-                // Add AI response
-                addMessage('assistant', data.response);
+                // Add AI response with animation for "fast" feel
+                addMessage('assistant', data.response, [], true);
 
                 // Refresh sidebar
                 loadChatHistory();
             } else {
                 addMessage('assistant', '⚠️ ' + (data.message || 'Something went wrong. Please try again.'));
+                isLoading = false;
+                sendBtn.disabled = false;
             }
         } catch (err) {
             removeTypingIndicator();
@@ -812,19 +877,12 @@
     // ============================================
     // Message Rendering
     // ============================================
-    // ============================================
-    // Message Rendering
-    // ============================================
-    function addMessage(role, content, files = []) {
+    function addMessage(role, content, files = [], animate = false) {
         const messageEl = document.createElement('div');
         messageEl.className = `message ${role}`;
 
         // Configure marked for markdown
         marked.setOptions({ breaks: true, gfm: true, highlight: false });
-
-        const renderedContent = role === 'assistant'
-            ? marked.parse(content)
-            : escapeHtml(content).replace(/\n/g, '<br>');
 
         let attachmentsHtml = '';
         if (files && files.length > 0) {
@@ -849,63 +907,108 @@
             attachmentsHtml += '</div>';
         }
 
-        if (role === 'user') {
-            messageEl.innerHTML = `
-                <div class="message-body">
-                    ${attachmentsHtml}
-                    <div class="message-content">${renderedContent}</div>
-                </div>
-            `;
-        } else {
-            // Assistant Message
-            const avatar = '<img src="/img/sharingan-logo.svg" onerror="this.src=\'https://cdn-icons-png.flaticon.com/512/3504/3504780.png\'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'; 
-            messageEl.innerHTML = `
-                <div class="message-row">
-                    <div class="message-avatar">${avatar}</div>
-                    <div class="message-body">
-                        <div class="message-role">DarkBot</div>
-                        <div class="message-content">${renderedContent}</div>
-                    </div>
-                </div>
+        const avatar = role === 'assistant' 
+            ? '<img src="/img/sharingan-logo.svg" onerror="this.src=\'https://cdn-icons-png.flaticon.com/512/3504/3504780.png\'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'
+            : `<div class="sidebar-user-avatar" style="width:100%; height:100%; font-size:14px;">${currentUser.name.charAt(0).toUpperCase()}</div>`;
+
+        messageEl.innerHTML = `
+            <div class="message-avatar">${avatar}</div>
+            <div class="message-body">
+                ${attachmentsHtml}
+                <div class="message-content"></div>
+                ${role === 'assistant' ? `
                 <div class="message-actions">
                     <button class="action-btn" title="Copy" onclick="copyMessageText(this)">
-                        <i class="fas fa-copy"></i>
+                        <i class="far fa-copy"></i>
+                    </button>
+                    <button class="action-btn" title="Good response" onclick="handleFeedback(this, 'good')">
+                        <i class="far fa-thumbs-up"></i>
+                    </button>
+                    <button class="action-btn" title="Bad response" onclick="handleFeedback(this, 'bad')">
+                        <i class="far fa-thumbs-down"></i>
+                    </button>
+                    <button class="action-btn" title="Share" onclick="shareMessage(this)">
+                        <i class="fas fa-arrow-up-from-bracket"></i>
                     </button>
                     <button class="action-btn" title="Regenerate" onclick="regenerateResponse()">
                         <i class="fas fa-rotate-right"></i>
                     </button>
-                    ${role === 'assistant' ? `
-                    <button class="action-btn" title="Good response">
-                        <i class="fas fa-thumbs-up"></i>
+                    <button class="action-btn" title="More" onclick="showToast('More options coming soon', 'info')">
+                        <i class="fas fa-ellipsis"></i>
                     </button>
-                    <button class="action-btn" title="Bad response">
-                        <i class="fas fa-thumbs-down"></i>
-                    </button>
-                    ` : ''}
-                </div>
-            `;
-            
-            // Show Share button when AI responds
-            if (shareBtn) shareBtn.classList.remove('hidden');
-        }
+                </div>` : ''}
+            </div>
+        `;
 
+        const contentEl = messageEl.querySelector('.message-content');
         messagesContainer.appendChild(messageEl);
 
-        // Syntax highlighting logic (same as before)
-        if (role === 'assistant') {
-            messageEl.querySelectorAll('pre').forEach(pre => {
-                const code = pre.querySelector('code');
-                if (code) {
-                    const lang = (code.className || '').replace('language-', '') || 'code';
-                    const header = document.createElement('div');
-                    header.className = 'code-block-header';
-                    header.innerHTML = `<span>${lang}</span><button class="copy-code-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>`;
-                    pre.insertBefore(header, code);
-                }
-            });
+        if (role === 'assistant' && animate) {
+            // "Thinking" delay before typing starts
+            setTimeout(() => {
+                typeWriter(contentEl, content);
+            }, 300);
+        } else {
+            contentEl.innerHTML = role === 'assistant' 
+                ? marked.parse(content) 
+                : escapeHtml(content).replace(/\n/g, '<br>');
+            processCodeBlocks(messageEl);
         }
 
+        if (role === 'assistant' && shareBtn) shareBtn.classList.remove('hidden');
         scrollToBottom();
+    }
+
+    function typeWriter(element, text) {
+        let currentText = '';
+        let i = 0;
+        const speed = text.length > 300 ? 25 : 15; // Speed adjustment
+        const charPerTick = text.length > 500 ? 8 : 3; // Characters per interval
+        
+        // Add cursor
+        const cursor = document.createElement('span');
+        cursor.className = 'typing-cursor';
+        element.parentElement.appendChild(cursor);
+
+        function type() {
+            if (i < text.length) {
+                // Determine how many characters to add this tick
+                let nextChunk = text.substring(i, i + charPerTick);
+                currentText += nextChunk;
+                i += charPerTick;
+
+                // Simple check for punctuation to pause slightly
+                let delay = speed;
+                if (nextChunk.match(/[.!?\n]/)) delay = speed * 4;
+
+                element.innerHTML = marked.parse(currentText);
+                processCodeBlocks(element.parentElement);
+                
+                scrollToBottom();
+                setTimeout(type, delay);
+            } else {
+                element.innerHTML = marked.parse(text);
+                processCodeBlocks(element.parentElement);
+                if (cursor) cursor.remove();
+                isLoading = false;
+                sendBtn.disabled = false;
+            }
+        }
+        type();
+    }
+
+    function processCodeBlocks(container) {
+        container.querySelectorAll('pre').forEach(pre => {
+            if (pre.querySelector('.code-block-header')) return;
+            const code = pre.querySelector('code');
+            if (code) {
+                const lang = (code.className || '').replace('language-', '') || 'code';
+                const header = document.createElement('div');
+                header.className = 'code-block-header';
+                header.innerHTML = `<span>${lang}</span><button class="copy-code-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>`;
+                pre.insertBefore(header, code);
+            }
+        });
     }
 
     function copyMessageText(btn) {
@@ -913,18 +1016,37 @@
         navigator.clipboard.writeText(content).then(() => {
             const originalIcon = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-check"></i>';
+            showToast('Message copied to clipboard', 'success');
             setTimeout(() => btn.innerHTML = originalIcon, 2000);
         });
     }
 
-    // Placeholder for regenerate (user needs to implement logic)
+    function handleFeedback(btn, type) {
+        const originalIcon = btn.innerHTML;
+        btn.style.color = 'var(--accent)';
+        showToast('Thank you for your feedback!', 'success');
+        setTimeout(() => {
+            btn.style.color = '';
+        }, 2000);
+    }
+
+    function shareMessage(btn) {
+        const content = btn.closest('.message').querySelector('.message-content').innerText;
+        // In a real app, this would be a deep link to the message
+        const shareUrl = window.location.href; 
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            showToast('Conversation link copied!', 'success');
+        });
+    }
+
     function regenerateResponse() {
-        // Logic to resend last user message
-        const messages = document.querySelectorAll('.message.user');
+        const messages = document.querySelectorAll('.message.user .message-content');
         if (messages.length > 0) {
             const lastMsg = messages[messages.length - 1].innerText;
-            setPrompt(lastMsg);
-            // Optionally auto-submit: sendMessage();
+            chatInput.value = lastMsg;
+            sendMessage();
+        } else {
+            showToast('No user message to regenerate', 'info');
         }
     }
 
@@ -1282,10 +1404,16 @@
 
     async function logout() {
         try {
-            await fetch('/auth/logout', { method: 'POST' });
-            window.location.href = '/login';
+            const res = await fetch('/auth/logout', { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                window.location.href = '/login';
+            } else {
+                showToast(data.message || 'Logout failed', 'error');
+            }
         } catch (err) {
             console.error('Logout failed:', err);
+            showToast('Logout failed. Please check your connection.', 'error');
         }
     }
 
@@ -1300,45 +1428,158 @@
         if (m) m.classList.remove('active');
     }
 
-    // Close settings on outside click
-    const settingsModal = document.getElementById('settingsModal');
-    if (settingsModal) {
-        settingsModal.addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) closeModal('settingsModal');
+    // Close modals on outside click
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeModal(modal.id);
+            }
         });
-    }
+    });
 
     // Final Initialization & Event Binding
     document.addEventListener('DOMContentLoaded', () => {
         const sidebarSetBtn = document.getElementById('sidebarSettingsBtn');
         const dropdownSetBtn = document.getElementById('dropdownSettingsBtn');
 
-        if (sidebarSetBtn) {
-            sidebarSetBtn.addEventListener('click', (e) => {
-                console.log('Sidebar settings clicked');
-                openSettingsModal();
-            });
-        }
-        if (dropdownSetBtn) {
-            dropdownSetBtn.addEventListener('click', (e) => {
-                console.log('Dropdown settings clicked');
-                openSettingsModal();
+        [sidebarSetBtn, dropdownSetBtn].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', (e) => {
+                    openSettingsModal();
+                });
+            }
+        });
+        
+        // Settings Modal Close
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        if (closeSettingsBtn) {
+            closeSettingsBtn.addEventListener('click', () => {
+                console.log('Closing settings modal...');
+                closeModal('settingsModal');
             });
         }
 
-        // Tab Switching
-        document.querySelectorAll('.settings-nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const tabId = item.getAttribute('data-tab');
-                document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                document.querySelectorAll('.settings-section-block').forEach(b => b.classList.remove('active'));
-                const targetTab = document.getElementById(`tab-${tabId}`);
-                if (targetTab) targetTab.classList.add('active');
-                const titleSpan = item.querySelector('span');
-                if (titleSpan) document.getElementById('settingsTabTitle').textContent = titleSpan.textContent;
+        // Settings Logout
+        const settingsLogoutBtn = document.getElementById('settingsLogoutBtn');
+        if (settingsLogoutBtn) {
+            settingsLogoutBtn.addEventListener('click', () => {
+                console.log('Logout clicked inside settings modal');
+                logout();
             });
-        });
+        }
+                // Personalization link
+                const personalBtn = document.getElementById('personalizationBtn');
+                if (personalBtn) {
+                    personalBtn.addEventListener('click', () => {
+                        openSettingsModal();
+                        // Switch to personalization tab
+                        const tabBtn = document.querySelector('.settings-nav-item[data-tab="personalization"]');
+                        if (tabBtn) tabBtn.click();
+                    });
+                }
+
+                // Upgrade Plan link
+                const upgradeBtn = document.getElementById('upgradePlanBtn');
+                if (upgradeBtn) {
+                    upgradeBtn.addEventListener('click', () => {
+                        showToast('Subscription system is coming soon!', 'info');
+                    });
+                }
+
+
+
+                // Tab Switching
+                document.querySelectorAll('.settings-nav-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const tabId = item.getAttribute('data-tab');
+                        document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
+                        item.classList.add('active');
+                        document.querySelectorAll('.settings-section-block').forEach(b => b.classList.remove('active'));
+                        const targetTab = document.getElementById(`tab-${tabId}`);
+                        if (targetTab) targetTab.classList.add('active');
+                        const titleSpan = item.querySelector('span');
+                        if (titleSpan) document.getElementById('settingsTabTitle').textContent = titleSpan.textContent;
+                    });
+                });
+
+                // Confirm Modal Close
+                const closeConfirmBtn = document.getElementById('closeConfirmBtn');
+                if (closeConfirmBtn) {
+                    closeConfirmBtn.addEventListener('click', () => closeModal('confirmModal'));
+                }
+
+                // Edit Profile Logic
+                const dropdownProfileHeader = document.getElementById('dropdownProfileHeader');
+                if (dropdownProfileHeader) {
+                    dropdownProfileHeader.addEventListener('click', () => {
+                        const userDropdown = document.getElementById('userDropdown');
+                        if (userDropdown) userDropdown.classList.remove('active');
+                        openModal('editProfileModal');
+                    });
+                }
+
+                const closeEditProfileBtn = document.getElementById('closeEditProfileBtn');
+                if (closeEditProfileBtn) {
+                    closeEditProfileBtn.addEventListener('click', () => closeModal('editProfileModal'));
+                }
+
+                const editProfileForm = document.getElementById('editProfileForm');
+                if (editProfileForm) {
+                    editProfileForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const saveBtn = document.getElementById('saveProfileBtn');
+                        const originalText = saveBtn.innerText;
+                        saveBtn.innerText = 'Saving...';
+                        saveBtn.disabled = true;
+
+                        const name = document.getElementById('editName').value;
+                        const email = document.getElementById('editEmail').value;
+
+                        try {
+                            const res = await fetch('/user/profile', {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name, email })
+                            });
+                            const data = await res.json();
+
+                            if (data.success) {
+                                // Update UI globally
+                                updateUIAfterProfileChange(data.user);
+                                closeModal('editProfileModal');
+                                showToast('Profile updated successfully', 'success');
+                            } else {
+                                showToast(data.message || 'Update failed', 'error');
+                            }
+                        } catch (err) {
+                            showToast('Network error', 'error');
+                        } finally {
+                            saveBtn.innerText = originalText;
+                            saveBtn.disabled = false;
+                        }
+                    });
+                }
+
+                function updateUIAfterProfileChange(user) {
+                    const initials = user.name.charAt(0).toUpperCase();
+                    
+                    // Update Avatars
+                    document.querySelectorAll('.sidebar-user-avatar, .large-avatar').forEach(av => av.innerText = initials);
+                    
+                    // Update Names
+                    const nameEls = ['sidebarUserName', 'dropdownUserName', 'editName'];
+                    nameEls.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value !== undefined ? el.value = user.name : el.innerText = user.name;
+                    });
+
+                    // Update Emails
+                    const emailEls = ['sidebarUserEmail', 'dropdownUserEmail', 'editEmail'];
+                    emailEls.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value !== undefined ? el.value = user.email : el.innerText = user.email;
+                    });
+                }
 
         loadChatHistory();
         chatInput.focus();

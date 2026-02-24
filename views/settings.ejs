@@ -254,7 +254,7 @@
                                 <div class="settings-item-label">Log Out</div>
                             </div>
                             <div class="settings-item-action">
-                                <button class="settings-btn outline" onclick="logout()">Log Out</button>
+                                <button class="settings-btn outline" id="settingsLogoutBtn">Log Out</button>
                             </div>
                         </div>
                     </div>
@@ -283,7 +283,7 @@
         <div class="modal">
             <div class="modal-header">
                 <h3>Change Password</h3>
-                <button class="modal-close" onclick="closeModal('passwordModal')"><i class="fas fa-xmark"></i></button>
+                <button class="modal-close" id="closePasswordModalBtn"><i class="fas fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <div class="auth-error" id="passwordError"></div>
@@ -464,7 +464,20 @@
         } catch (err) { showToast('Error', 'error'); }
     }
 
-    async function logout() { await fetch('/auth/logout', { method: 'POST' }); location.href = '/'; }
+    async function logout() { 
+        try {
+            const res = await fetch('/auth/logout', { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                window.location.href = '/login';
+            } else {
+                showToast(data.message || 'Logout failed', 'error');
+            }
+        } catch (err) {
+            console.error('Logout failed:', err);
+            showToast('Logout failed', 'error');
+        }
+    }
 
     function clearAllChats() {
         showConfirm('Clear History', 'Delete all chats?', async () => {
@@ -480,6 +493,18 @@
         document.getElementById('confirmAction').onclick = () => { closeModal('confirmModal'); onConfirm(); };
     }
 
+    // Event Listeners for Modal Close Buttons
+    const logoutBtn = document.getElementById('settingsLogoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+
+    const closePasswordBtn = document.getElementById('closePasswordModalBtn');
+    if (closePasswordBtn) {
+        closePasswordBtn.addEventListener('click', () => closeModal('passwordModal'));
+    }
+
+    // Modal Utilities
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     function showToast(msg, type) {
         const t = document.createElement('div');
