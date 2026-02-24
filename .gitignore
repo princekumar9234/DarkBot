@@ -2,3 +2,9 @@ node_modules/
 .env
 .DS_Store
 *.log
+log.txt
+test_dns.js
+npm-debug.log*
+.npm
+.idea/
+.vscode/
