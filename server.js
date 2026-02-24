@@ -81,24 +81,45 @@ app.use(errorHandler);
 // ============================================
 // Database Connection & Server Start
 // ============================================
-mongoose.connect(process.env.MONGODB_URI)
+
+const MONGO_URI = process.env.MONGODB_URI;
+const MAX_RETRIES = 5;
+let retryCount = 0;
+
+// Start HTTP server first (so Render health checks pass)
+const server = app.listen(PORT, () => {
+    console.log(`🤖 DarkBot is live!`);
+    console.log(`📡 Port: ${PORT}`);
+    console.log(`🔗 Mode: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Connect to MongoDB with retry
+function connectDB() {
+    mongoose.connect(MONGO_URI, {
+        serverSelectionTimeoutMS: 10000,
+        socketTimeoutMS: 45000,
+    })
     .then((conn) => {
         console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-        const server = app.listen(PORT, () => {
-            console.log(`🤖 DarkBot is live!`);
-            console.log(`📡 Port: ${PORT}`);
-            console.log(`🔗 Mode: ${process.env.NODE_ENV || 'development'}`);
-        });
-
-        // Handle unhandled promise rejections
-        process.on('unhandledRejection', (err) => {
-            console.error(`❌ Unhandled Rejection: ${err.message}`);
-            server.close(() => process.exit(1));
-        });
+        retryCount = 0;
     })
     .catch((err) => {
-        console.error('❌ MongoDB connection error:', err.message);
-        process.exit(1);
+        retryCount++;
+        console.error(`❌ MongoDB Error (attempt ${retryCount}/${MAX_RETRIES}): ${err.message}`);
+        if (retryCount < MAX_RETRIES) {
+            console.log(`🔄 Retrying in 5 seconds...`);
+            setTimeout(connectDB, 5000);
+        } else {
+            console.error('🔴 Max retries reached. Check your MONGODB_URI and network.');
+        }
     });
+}
+
+connectDB();
+
+// Handle unhandled rejections
+process.on('unhandledRejection', (err) => {
+    console.error(`❌ Unhandled Rejection: ${err.message}`);
+});
 
 module.exports = app;
