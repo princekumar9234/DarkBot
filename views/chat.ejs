@@ -471,7 +471,7 @@
 
                     <!-- Personalization Tab -->
                     <div class="settings-section-block" id="tab-personalization">
-                         <div class="settings-row">
+                        <div class="settings-row">
                             <div class="settings-info">
                                 <div class="settings-label">AI Engine</div>
                                 <div class="settings-desc">Choose your default AI provider</div>
@@ -483,6 +483,24 @@
                                         <option value="openai" <%= user.preferences.aiProvider === 'openai' ? 'selected' : '' %>>GPT-4o</option>
                                     </select>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <div class="settings-label">Custom Instructions</div>
+                                <div class="settings-desc">Let DarkBot remember personalized context about you for better responses.</div>
+                            </div>
+                            <div class="settings-control">
+                                <div class="settings-toggle" id="customInstructionsToggle" onclick="this.classList.toggle('active'); showToast('Custom instructions ' + (this.classList.contains('active') ? 'enabled' : 'disabled'), 'success');"></div>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <div class="settings-label">Memory</div>
+                                <div class="settings-desc">Allow DarkBot to remember context from past conversations.</div>
+                            </div>
+                            <div class="settings-control">
+                                <div class="settings-toggle active" id="memoryToggle" onclick="this.classList.toggle('active'); showToast('Memory ' + (this.classList.contains('active') ? 'enabled' : 'disabled'), 'success');"></div>
                             </div>
                         </div>
                     </div>
@@ -536,18 +554,114 @@
                         </div>
                     </div>
 
-                    <!-- placeholders for other tabs -->
+                    <!-- Notifications Tab -->
                     <div class="settings-section-block" id="tab-notifications">
-                        <div style="text-align: center; padding: 40px; color: #8e8e8e;">Notification settings coming soon.</div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <div class="settings-label">Response alerts</div>
+                                <div class="settings-desc">Get notified when DarkBot finishes long responses.</div>
+                            </div>
+                            <div class="settings-control">
+                                <div class="settings-toggle" id="responseAlertToggle" onclick="this.classList.toggle('active')"></div>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <div class="settings-label">Product announcements</div>
+                                <div class="settings-desc">Updates about new features and improvements.</div>
+                            </div>
+                            <div class="settings-control">
+                                <div class="settings-toggle active" id="productAnnouncementsToggle" onclick="this.classList.toggle('active')"></div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Apps Tab -->
                     <div class="settings-section-block" id="tab-apps">
-                        <div style="text-align: center; padding: 40px; color: #8e8e8e;">App integrations coming soon.</div>
+                        <div style="text-align: center; padding: 40px; color: #8e8e8e;">
+                            <i class="fas fa-plug" style="font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.3;"></i>
+                            App integrations coming soon.
+                        </div>
                     </div>
+
+                    <!-- Security Tab -->
                     <div class="settings-section-block" id="tab-security">
-                        <div style="text-align: center; padding: 40px; color: #8e8e8e;">Security features coming soon.</div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <div class="settings-label">Change Password</div>
+                                <div class="settings-desc">Update your account password for security.</div>
+                            </div>
+                            <div class="settings-control">
+                                <button class="settings-btn-play" onclick="openChangePasswordModal()">
+                                    <i class="fas fa-key"></i>
+                                    <span>Change</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <div class="settings-label">Active Sessions</div>
+                                <div class="settings-desc">You are logged in on this device.</div>
+                            </div>
+                            <div class="settings-control">
+                                <button class="settings-btn-play" onclick="logout()">
+                                    <i class="fas fa-right-from-bracket"></i>
+                                    <span>Log out</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="settings-row" style="border-top: 1px solid rgba(239,68,68,0.2); margin-top: 16px; padding-top: 16px;">
+                            <div class="settings-info">
+                                <div class="settings-label" style="color: #ef4444;">Delete Account</div>
+                                <div class="settings-desc">Permanently delete your account and all data. This cannot be undone.</div>
+                            </div>
+                            <div class="settings-control">
+                                <button class="settings-btn-play" style="color: #ef4444; border-color: rgba(239,68,68,0.3);" onclick="deleteAccount()">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Delete</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </main>
+        </div>
+    </div>
+    <!-- Change Password Modal -->
+    <div class="modal-overlay" id="changePasswordModal">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3>Change Password</h3>
+                <button class="modal-close" onclick="closeModal('changePasswordModal')"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-error" id="pwChangeError" style="display:none; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 10px 14px; border-radius: 10px; margin-bottom: 16px; font-size: 13px;"></div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display:block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary);">Current Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="cwCurrentPw" placeholder="••••••••" style="width:100%; padding: 11px 40px 11px 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 10px; color: #fff; outline: none; box-sizing: border-box;">
+                        <button type="button" onclick="togglePwField('cwCurrentPw', 'cwCurrentPwEye')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#666; cursor:pointer;"><i id="cwCurrentPwEye" class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display:block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary);">New Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="cwNewPw" placeholder="••••••••" style="width:100%; padding: 11px 40px 11px 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 10px; color: #fff; outline: none; box-sizing: border-box;">
+                        <button type="button" onclick="togglePwField('cwNewPw', 'cwNewPwEye')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#666; cursor:pointer;"><i id="cwNewPwEye" class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="display:block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary);">Confirm New Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="cwConfirmPw" placeholder="••••••••" style="width:100%; padding: 11px 40px 11px 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 10px; color: #fff; outline: none; box-sizing: border-box;">
+                        <button type="button" onclick="togglePwField('cwConfirmPw', 'cwConfirmPwEye')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#666; cursor:pointer;"><i id="cwConfirmPwEye" class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="settings-btn outline" onclick="closeModal('changePasswordModal')">Cancel</button>
+                <button class="settings-btn primary" id="changePasswordSubmitBtn" onclick="submitChangePassword()">Update Password</button>
+            </div>
         </div>
     </div>
 
@@ -1415,6 +1529,87 @@
             console.error('Logout failed:', err);
             showToast('Logout failed. Please check your connection.', 'error');
         }
+    }
+
+    function openChangePasswordModal() {
+        document.getElementById('cwCurrentPw').value = '';
+        document.getElementById('cwNewPw').value = '';
+        document.getElementById('cwConfirmPw').value = '';
+        const err = document.getElementById('pwChangeError');
+        err.style.display = 'none';
+        err.textContent = '';
+        openModal('changePasswordModal');
+    }
+
+    function togglePwField(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (!input || !icon) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    async function submitChangePassword() {
+        const currentPassword = document.getElementById('cwCurrentPw').value.trim();
+        const newPassword = document.getElementById('cwNewPw').value.trim();
+        const confirmPassword = document.getElementById('cwConfirmPw').value.trim();
+        const errEl = document.getElementById('pwChangeError');
+        const btn = document.getElementById('changePasswordSubmitBtn');
+        const showErr = (msg) => { errEl.textContent = msg; errEl.style.display = 'block'; };
+
+        if (!currentPassword || !newPassword || !confirmPassword) return showErr('All fields are required.');
+        if (newPassword.length < 6) return showErr('New password must be at least 6 characters.');
+        if (newPassword !== confirmPassword) return showErr('New passwords do not match.');
+
+        btn.textContent = 'Updating...';
+        btn.disabled = true;
+        errEl.style.display = 'none';
+
+        try {
+            const res = await fetch('/user/password', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
+            });
+            const data = await res.json();
+            if (data.success) {
+                closeModal('changePasswordModal');
+                showToast('Password updated successfully!', 'success');
+            } else {
+                showErr(data.message || 'Failed to update password.');
+            }
+        } catch (err) {
+            showErr('Network error. Please try again.');
+        } finally {
+            btn.textContent = 'Update Password';
+            btn.disabled = false;
+        }
+    }
+
+    function deleteAccount() {
+        showConfirm(
+            'Delete Account',
+            'Are you sure? This will permanently delete your account and ALL your chats. This CANNOT be undone.',
+            async () => {
+                try {
+                    const res = await fetch('/user/account', { method: 'DELETE' });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('Account deleted. Goodbye!', 'success');
+                        setTimeout(() => window.location.href = '/login', 1500);
+                    } else {
+                        showToast(data.message || 'Failed to delete account.', 'error');
+                    }
+                } catch (err) {
+                    showToast('Network error. Please try again.', 'error');
+                }
+            }
+        );
     }
 
     // Modal Utilities
