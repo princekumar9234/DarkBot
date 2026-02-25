@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const helmet = require('helmet');
 const cors = require('cors');
+const MongoStore = require('connect-mongo');
 
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
@@ -46,6 +47,11 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'darkbot_session',
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI,
+        ttl: 7 * 24 * 60 * 60, // 7 days
+        autoRemove: 'native'
+    }),
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
