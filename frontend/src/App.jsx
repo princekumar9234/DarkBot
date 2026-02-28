@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import Settings  from './pages/SettingsPage';
+import HomePage  from './pages/HomePage';
 import { userService } from './services/api';
 
 export default function App() {
@@ -50,7 +51,7 @@ export default function App() {
 
         <main className={`flex-1 min-w-0 bg-[#212121] overflow-y-auto custom-scrollbar`}>
           <Routes>
-            <Route path="/"          element={user ? <DashboardPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <Navigate to="/login" />} />
+            <Route path="/"          element={user ? <DashboardPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <HomePage />} />
             <Route path="/chat"      element={user ? <ChatPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <Navigate to="/login" />} />
             <Route path="/chat/:chatId" element={user ? <ChatPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <Navigate to="/login" />} />
             <Route path="/settings"  element={user ? <Settings user={user} setUser={setUser} /> : <Navigate to="/login" />} />
