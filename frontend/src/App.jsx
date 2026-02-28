@@ -48,7 +48,7 @@ export default function App() {
           </div>
         )}
 
-        <main className={`flex-1 min-w-0 bg-[#212121] ${user ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+        <main className={`flex-1 min-w-0 bg-[#212121] overflow-y-auto custom-scrollbar`}>
           <Routes>
             <Route path="/"          element={user ? <DashboardPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <Navigate to="/login" />} />
             <Route path="/chat"      element={user ? <ChatPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <Navigate to="/login" />} />

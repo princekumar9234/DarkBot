@@ -59,29 +59,29 @@ export default function DashboardPage({ user, onMenuClick }) {
       <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-purple-600/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/10 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto px-6 py-10 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 relative z-10">
         
         {/* Header Section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
           <div className="flex items-center gap-3 mb-3">
             <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-[2px] text-[#19c37d]">
               Agentic Intelligence
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">
             Welcome, <span className="bg-gradient-to-r from-[#19c37d] to-emerald-300 bg-clip-text text-transparent">{user?.name}</span>
           </h1>
-          <p className="text-[#9a9a9a] text-lg max-w-2xl leading-relaxed">
+          <p className="text-[#9a9a9a] text-base sm:text-lg max-w-2xl leading-relaxed">
             DarkBot is ready to assist. How can we push the boundaries of productivity today?
           </p>
         </motion.div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 sm:mb-10">
           {stats.map((s, i) => (
             <motion.div 
               key={i}
@@ -99,7 +99,7 @@ export default function DashboardPage({ user, onMenuClick }) {
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Quick Actions */}
           <div className="lg:col-span-2 space-y-6">
