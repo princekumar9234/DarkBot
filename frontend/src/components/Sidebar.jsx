@@ -73,6 +73,11 @@ export default function Sidebar({ user, setUser, onClose }) {
   };
 
   const goNew = () => {
+    navigate('/chat');
+    onClose?.();
+  };
+
+  const goDash = () => {
     navigate('/');
     onClose?.();
   };
@@ -85,7 +90,10 @@ export default function Sidebar({ user, setUser, onClose }) {
   return (
     <aside className="w-[260px] h-full flex flex-col bg-[#171717] border-r border-white/[0.06] select-none">
       <div className="flex items-center gap-1 px-2 pt-3 pb-2">
-        <div className="flex items-center gap-2.5 flex-1 px-2 py-1.5">
+        <div 
+          onClick={goDash}
+          className="flex items-center gap-2.5 flex-1 px-2 py-1.5 cursor-pointer hover:bg-white/5 rounded-2xl transition-all"
+        >
           <div className="w-8 h-8 rounded-xl bg-[#19c37d] flex items-center justify-center text-black font-black text-lg flex-shrink-0 shadow shadow-[#19c37d]/30">D</div>
           <span className="font-semibold text-sm text-white">DarkBot</span>
         </div>

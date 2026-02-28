@@ -84,14 +84,10 @@ const distPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(distPath));
 
 // Catch-all to serve index.html for React Router
-app.get('*', (req, res) => {
+app.get('(.*)', (req, res) => {
     // If request is not an API call, serve React App
     if (!req.path.startsWith('/auth') && !req.path.startsWith('/chat') && !req.path.startsWith('/user') && !req.path.startsWith('/health')) {
-        res.sendFile(path.join(distPath, 'index.html'), (err) => {
-            if (err) {
-                res.status(404).json({ success: false, message: "Frontend build not found. Run 'npm run build' in frontend folder." });
-            }
-        });
+        res.sendFile(path.join(distPath, 'index.html'));
     }
 });
 

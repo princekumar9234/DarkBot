@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar   from './components/Sidebar';
 import ChatPage  from './pages/ChatPage';
+import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import Settings  from './pages/SettingsPage';
@@ -47,10 +48,10 @@ export default function App() {
           </div>
         )}
 
-        {/* Main content */}
         <main className={`flex-1 min-w-0 bg-[#212121] ${user ? 'overflow-hidden' : 'overflow-y-auto'}`}>
           <Routes>
-            <Route path="/"          element={user ? <ChatPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <Navigate to="/login" />} />
+            <Route path="/"          element={user ? <DashboardPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <Navigate to="/login" />} />
+            <Route path="/chat"      element={user ? <ChatPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <Navigate to="/login" />} />
             <Route path="/chat/:chatId" element={user ? <ChatPage user={user} onMenuClick={() => setSidebarOpen(true)} /> : <Navigate to="/login" />} />
             <Route path="/settings"  element={user ? <Settings user={user} setUser={setUser} /> : <Navigate to="/login" />} />
             <Route path="/login"     element={!user ? <LoginPage  setUser={setUser} /> : <Navigate to="/" />} />
