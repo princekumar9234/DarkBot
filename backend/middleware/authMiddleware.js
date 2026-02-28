@@ -49,56 +49,7 @@ const authMiddleware = async (req, res, next) => {
 };
 
 /**
- * Middleware to protect view routes (redirects to login)
- */
-const authViewMiddleware = async (req, res, next) => {
-    try {
-        let token;
-
-        if (req.cookies && req.cookies.token) {
-            token = req.cookies.token;
-        }
-
-        if (!token) {
-            return res.redirect('/login');
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id).select('-password');
-
-        if (!user) {
-            res.clearCookie('token');
-            return res.redirect('/login');
-        }
-
-        req.user = user;
-        next();
-    } catch (error) {
-        res.clearCookie('token');
-        return res.redirect('/login');
-    }
-};
-
-/**
- * Middleware: redirect to chat if already logged in
- */
-const redirectIfAuth = async (req, res, next) => {
-    try {
-        if (req.cookies && req.cookies.token) {
-            const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
-            const user = await User.findById(decoded.id);
-            if (user) {
-                return res.redirect('/chat');
-            }
-        }
-        next();
-    } catch (error) {
-        next();
-    }
-};
-
-/**
- * Middleware: just load user if exists (no redirect)
+ * Middleware: just load user if exists (useful for optional auth)
  */
 const loadUser = async (req, res, next) => {
     try {
@@ -115,4 +66,4 @@ const loadUser = async (req, res, next) => {
     }
 };
 
-module.exports = { authMiddleware, authViewMiddleware, redirectIfAuth, loadUser };
+module.exports = { authMiddleware, loadUser };
