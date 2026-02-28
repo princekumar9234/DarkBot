@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: darkbot
+    runtime: node
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false # User must provide this
+      - key: SESSION_SECRET
+        sync: false # User must provide this
+      - key: JWT_SECRET
+        sync: false # User must provide this
+      - key: OPENAI_API_KEY
+        sync: false # optional
+      - key: GOOGLE_GEMINI_KEY
+        sync: false # optional
+      - key: BACKEND_URL
+        value: https://darkbot.onrender.com # Change this if your domain is different

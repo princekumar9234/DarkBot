@@ -25,7 +25,7 @@ try {
     );
     router.get('/google/callback',
       passportMiddleware,
-      passport.authenticate('google', { session: false, failureRedirect: 'http://localhost:5173/login?error=google_failed' }),
+      passport.authenticate('google', { session: false, failureRedirect: '/login?error=google_failed' }),
       oauthSuccess
     );
   }
@@ -38,7 +38,7 @@ try {
     );
     router.get('/github/callback',
       passportMiddleware,
-      passport.authenticate('github', { session: false, failureRedirect: 'http://localhost:5173/login?error=github_failed' }),
+      passport.authenticate('github', { session: false, failureRedirect: '/login?error=github_failed' }),
       oauthSuccess
     );
   }
@@ -51,7 +51,7 @@ try {
     );
     router.get('/twitter/callback',
       passportMiddleware,
-      passport.authenticate('twitter', { session: false, failureRedirect: 'http://localhost:5173/login?error=twitter_failed' }),
+      passport.authenticate('twitter', { session: false, failureRedirect: '/login?error=twitter_failed' }),
       oauthSuccess
     );
   }

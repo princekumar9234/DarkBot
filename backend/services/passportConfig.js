@@ -10,7 +10,7 @@ const User             = require('../models/User');
 const jwt              = require('jsonwebtoken');
 
 const FRONTEND = process.env.NODE_ENV === 'production'
-  ? process.env.FRONTEND_URL || 'http://localhost:5173'
+  ? '' 
   : 'http://localhost:5173';
 
 // ── Serialise / Deserialise (required by passport) ──

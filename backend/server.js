@@ -40,7 +40,9 @@ app.use(helmet({
     },
 }));
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: process.env.NODE_ENV === 'production' 
+      ? [process.env.FRONTEND_URL, 'https://darkbot.onrender.com'] // Fallback or use *
+      : ['http://localhost:5173', 'http://127.0.0.1:5173'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
@@ -58,7 +60,7 @@ app.use(session({
         autoRemove: 'native'
     }),
     cookie: {
-        secure: false, // Set to false for dev
+        secure: process.env.NODE_ENV === 'production', 
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     }
@@ -79,14 +81,29 @@ app.get('/health', (req, res) => {
 // ============================================
 // Routes
 // ============================================
-app.use('/', viewRoutes);
+
+// API Routes
 app.use('/auth', authRoutes);
 app.use('/chat', chatRoutes);
 app.use('/user', userRoutes);
 
-// ============================================
+// Production: Serve React Frontend
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../frontend/dist')));
+    
+    // Serve frontend for any non-API routes
+    app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/auth/') || req.path.startsWith('/chat/') || req.path.startsWith('/user/')) {
+            return next();
+        }
+        res.sendFile(path.resolve(__dirname, '../frontend', 'dist', 'index.html'));
+    });
+} else {
+    // Development: Use EJS View Routes
+    app.use('/', viewRoutes);
+}
+
 // Error Handler
-// ============================================
 app.use(errorHandler);
 
 // ============================================
