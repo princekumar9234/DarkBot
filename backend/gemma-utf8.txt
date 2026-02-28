@@ -1,0 +1,4 @@
+﻿[dotenv@17.3.1] injecting env (15) from .env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+SUCCESS [gemma-3-1b-it]: Hello there! How's your day going so far? ≡ƒÿè 
+
+Is there anything youΓÇÖd like to chat about, or anything I can help you with?

@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══════════════════════════════════════════════
+   DARKBOT — MASTER STYLESHEET
+   Premium ChatGPT-style Dark UI
+══════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ─── CSS Variables ────────────────────────── */
+:root {
+  --c-bg:        #212121;
+  --c-surface:   #2f2f2f;
+  --c-sidebar:   #171717;
+  --c-hover:     #303030;
+  --c-border:    rgba(255,255,255,0.1);
+  --c-text:      #ececec;
+  --c-muted:     #9a9a9a;
+  --c-brand:     #19c37d;
+  --c-brand-dim: rgba(25,195,125,0.15);
+}
+
+/* ─── Reset ────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.no-scroll { overflow: hidden; }
+
+/* ─── Scrollbar ────────────────────────────── */
+::-webkit-scrollbar            { width: 6px; }
+::-webkit-scrollbar-track      { background: transparent; }
+::-webkit-scrollbar-thumb      { background: rgba(255,255,255,0.15); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover{ background: rgba(255,255,255,0.25); }
+
+/* ─── Animations ───────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes blink {
+  0%,100% { opacity:0.2; }
+  50%      { opacity:1; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade-up { animation: fadeUp .25s ease both; }
+.animate-spin    { animation: spin .7s linear infinite; }
+.animate-pulse   { animation: blink 1.4s ease-in-out infinite; }
+
+/* ─── Markdown Rendering ────────────────────── */
+.md { color: var(--c-text); }
+.md p            { margin-bottom:.85em; line-height:1.7; }
+.md p:last-child { margin-bottom:0; }
+.md h1,.md h2,.md h3 { font-weight:600; margin:1.2em 0 .4em; color:#fff; }
+.md h1 { font-size:1.35em; }
+.md h2 { font-size:1.2em; }
+.md h3 { font-size:1.05em; }
+.md ul,.md ol    { padding-left:1.5rem; margin-bottom:.85em; }
+.md li           { margin-bottom:.3em; }
+
+.md code {
+  background: rgba(255,255,255,0.1);
+  padding: .15em .4em;
+  border-radius: .3em;
+  font-family: 'Fira Code', ui-monospace, Menlo, monospace;
+  font-size: .85em;
+}
+.md pre {
+  background: #0d0d0d;
+  border: 1px solid var(--c-border);
+  border-radius: .7rem;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  margin: .75em 0 1em;
+}
+.md pre code { background:transparent; padding:0; font-size:.87em; color:#e0e0e0; }
+.md blockquote {
+  border-left: 3px solid var(--c-border);
+  padding-left: 1rem;
+  color: var(--c-muted);
+  font-style: italic;
+  margin: .7em 0;
+}
+.md a    { color: var(--c-brand); text-decoration: underline; }
+.md strong { color:#fff; font-weight:600; }
+.md table { border-collapse:collapse; width:100%; margin:1em 0; font-size:.9em; }
+.md th,.md td { border:1px solid var(--c-border); padding:.5rem .75rem; text-align:left; }
+.md th { background:rgba(255,255,255,.05); font-weight:600; }
+.md hr { border:none; border-top:1px solid var(--c-border); margin:1.2em 0; }

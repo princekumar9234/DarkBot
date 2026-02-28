@@ -1,188 +1,81 @@
-# 🤖 DarkBot - AI Chatbot
+# DarkBot - AI Chatbot Platform
 
-A production-ready AI chatbot web application with a ChatGPT-like interface, powered by **OpenAI** and **Google Gemini** APIs.
+A powerful AI chatbot project powered by OpenAI and Google Gemini, refactored into a modern MERN-like stack with a React frontend and Node.js/Express backend.
 
-![Node.js](https://img.shields.io/badge/Node.js-18+-green)
-![Express](https://img.shields.io/badge/Express-5.x-blue)
-![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-brightgreen)
-![License](https://img.shields.io/badge/License-ISC-yellow)
+## 🚀 Key Features
 
----
-
-## ✨ Features
-
-- 🎨 **ChatGPT-like UI** - Premium dark/light theme interface
-- 🤖 **Dual AI Providers** - Switch between OpenAI ChatGPT and Google Gemini
-- 💬 **Real-time Chat** - Smooth messaging with typing indicators
-- 📝 **Markdown Support** - Code blocks, tables, lists, and more
-- 📋 **Code Copy** - One-click copy for code blocks
-- 📂 **Chat History** - All conversations saved and accessible
-- 🔐 **Authentication** - JWT-based login/signup with bcrypt hashing
-- ⚙️ **Settings** - Theme, accent color, AI provider, profile management
-- 📱 **Responsive** - Works on desktop, tablet, and mobile
-- 🛡️ **Rate Limiting** - Protection against API abuse
-- 🎨 **7 Accent Colors** - Customize your experience
-
----
+- **Dual AI Engines**: Switch between Google Gemini and OpenAI.
+- **Modern UI**: Clean, responsive, glassmorphic design built with React and Tailwind concepts.
+- **Multimodal Support**: Send text and attachments (Images, PDFs, Text files).
+- **Persistent Memory**: Chat history and sessions managed with MongoDB.
+- **Security**: Robust authentication and secure sessions.
 
 ## 📁 Project Structure
 
-```
-ChatBot/
-├── controllers/
-│   ├── authController.js      # Login, Signup, Logout
-│   ├── chatController.js      # Send messages, Chat history
-│   └── userController.js      # Profile, Preferences, Password
-├── middleware/
-│   ├── authMiddleware.js      # JWT verification
-│   ├── errorHandler.js        # Global error handler
-│   └── rateLimiter.js         # Rate limiting
-├── models/
-│   ├── User.js                # User schema with bcrypt
-│   └── Chat.js                # Chat schema with messages
-├── routes/
-│   ├── authRoutes.js          # /auth/* routes
-│   ├── chatRoutes.js          # /chat/* routes
-│   ├── userRoutes.js          # /user/* routes
-│   └── viewRoutes.js          # Page routes (EJS)
-├── services/
-│   └── aiService.js           # OpenAI & Gemini integration
-├── views/
-│   ├── chat.ejs               # Main chat interface
-│   ├── login.ejs              # Login page
-│   ├── signup.ejs             # Registration page
-│   ├── settings.ejs           # Settings page
-│   └── error.ejs              # Error page
-├── public/
-│   └── css/
-│       └── style.css          # Complete design system
-├── server.js                  # Express app entry point
-├── .env                       # Environment variables
-├── .gitignore
-├── package.json
+```bash
+root/
+├── frontend/         # React + Vite Application
+│   ├── src/          # Source files
+│   ├── services/     # Axios API services
+│   └── components/   # UI Fragments
+├── backend/          # Node.js + Express + MongoDB
+│   ├── controllers/  # API Logic
+│   ├── models/       # Mongoose Schemas
+│   └── routes/       # API Endpoints
 └── README.md
 ```
 
----
+## 🛠️ Setup Instructions
 
-## 🚀 Getting Started
+### 1. Prerequisites
+- Node.js (v18+)
+- MongoDB (Local or Atlas)
+- OpenAI API Key & Google Gemini API Key
 
-### Prerequisites
+### 2. Environment Configuration
 
-- **Node.js** 18+ installed
-- **MongoDB** running locally or a MongoDB Atlas URI
-- API keys from **OpenAI** and/or **Google Gemini**
+#### Backend (`/backend/.env`)
+Create a `.env` file in the `backend/` directory with:
+```env
+PORT=3000
+MONGODB_URI=your_mongodb_connection_string
+SESSION_SECRET=your_secret
+OPENAI_API_KEY=your_openai_key
+GEMINI_API_KEY=your_gemini_key
+NODE_ENV=development
+```
 
-### Installation
+#### Frontend (`/frontend/.env`)
+Create a `.env` file in the `frontend/` directory with:
+```env
+VITE_API_BASE_URL=http://localhost:3000
+```
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/princekumar9234/chatbot.git
-   cd chatbot
-   ```
+### 3. Installation
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+From the root directory:
+```bash
+# Install root dependencies
+npm install
 
-3. **Configure environment variables**
+# Install backend dependencies
+cd backend && npm install
 
-   Edit the `.env` file with your credentials:
-   ```env
-   MONGODB_URI=mongodb://127.0.0.1:27017/darkbot
-   JWT_SECRET=your_strong_secret_key
-   SESSION_SECRET=your_session_secret
-   OPENAI_API_KEY=sk-your-openai-key
-   GEMINI_API_KEY=your-gemini-api-key
-   PORT=3000
-   ```
+# Install frontend dependencies
+cd ../frontend && npm install
+```
 
-4. **Start MongoDB** (if running locally)
-   ```bash
-   mongod
-   ```
+### 4. Running the Project
 
-5. **Start the server**
-   ```bash
-   npm start
-   ```
+**Option 1: Concurrent Mode (Recommended)**
+From the root directory:
+```bash
+npm run dev
+```
 
-6. **Open your browser**
-   ```
-   http://localhost:3000
-   ```
+**Option 2: Separate Terminals**
+- Backend: `cd backend && npm run dev`
+- Frontend: `cd frontend && npm run dev`
 
----
-
-## 🔌 API Endpoints
-
-### Authentication
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/auth/signup` | Register new user |
-| POST | `/auth/login` | User login |
-| POST | `/auth/logout` | User logout |
-
-### Chat
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/chat/send` | Send message & get AI response |
-| GET | `/chat/history` | Get all user chats |
-| GET | `/chat/:chatId` | Get specific chat |
-| DELETE | `/chat/:chatId` | Delete a chat |
-| DELETE | `/chat/clear/all` | Delete all chats |
-
-### User
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/user/profile` | Get user profile |
-| PUT | `/user/profile` | Update profile |
-| PUT | `/user/password` | Change password |
-| PUT | `/user/preferences` | Update preferences |
-| DELETE | `/user/account` | Delete account |
-
----
-
-## 🔑 Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `MONGODB_URI` | MongoDB connection string | ✅ |
-| `JWT_SECRET` | Secret key for JWT tokens | ✅ |
-| `SESSION_SECRET` | Express session secret | ✅ |
-| `OPENAI_API_KEY` | OpenAI API key | ❌ (if using Gemini) |
-| `GEMINI_API_KEY` | Google Gemini API key | ❌ (if using OpenAI) |
-| `PORT` | Server port (default: 3000) | ❌ |
-
----
-
-## 🛠️ Tech Stack
-
-- **Frontend**: HTML5, CSS3, JavaScript, EJS
-- **Backend**: Node.js, Express.js 5
-- **Database**: MongoDB with Mongoose
-- **AI**: OpenAI GPT-3.5-Turbo, Google Gemini 2.0 Flash
-- **Auth**: JWT + bcrypt
-- **Security**: Helmet, CORS, Rate Limiting
-
----
-
-## 📸 Pages
-
-- `/` - Login page
-- `/signup` - Registration page
-- `/chat` - Main chat interface
-- `/settings` - User settings & preferences
-
----
-
-## 👤 Author
-
-**Prince Kumar**
-
----
-
-## 📄 License
-
-This project is licensed under the ISC License.
+## 🛡️ License
+ISC - Prince Kumar

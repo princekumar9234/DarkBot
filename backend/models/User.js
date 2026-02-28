@@ -23,8 +23,13 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: [true, 'Password is required'],
+        required: false,          // optional for OAuth users
         minlength: [6, 'Password must be at least 6 characters']
+    },
+    oauthProvider: {
+        type: String,
+        enum: ['google', 'github', 'twitter', null],
+        default: null
     },
     avatar: {
         type: String,
@@ -52,9 +57,9 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// Hash password before saving
+// Hash password before saving (skip if OAuth user or password unchanged)
 userSchema.pre('save', async function () {
-    if (!this.isModified('password')) return;
+    if (!this.password || !this.isModified('password')) return;
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
 });
