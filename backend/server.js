@@ -23,6 +23,9 @@ const { errorHandler } = require('./middleware/errorHandler');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Enable trust proxy so that 'secure: true' cookies work behind a reverse proxy (like Render/Heroku)
+app.set('trust proxy', 1);
+
 // ============================================
 // Security & Middleware
 // ============================================
@@ -61,6 +64,7 @@ app.use(session({
     cookie: {
         secure: process.env.NODE_ENV === 'production', 
         httpOnly: true,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     }
 }));
