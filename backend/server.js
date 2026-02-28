@@ -16,7 +16,6 @@ const MongoStore = require('connect-mongo').default;
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const userRoutes = require('./routes/userRoutes');
-const viewRoutes = require('./routes/viewRoutes');
 
 // Import Middleware
 const { errorHandler } = require('./middleware/errorHandler');
@@ -66,13 +65,6 @@ app.use(session({
     }
 }));
 
-// ============================================
-// View Engine & Static Files
-// ============================================
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Health Check Route
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'UP', timestamp: new Date(), uptime: process.uptime() });
@@ -87,21 +79,21 @@ app.use('/auth', authRoutes);
 app.use('/chat', chatRoutes);
 app.use('/user', userRoutes);
 
-// Production: Serve React Frontend
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
-    
-    // Serve frontend for any non-API routes
-    app.get('*', (req, res, next) => {
-        if (req.path.startsWith('/auth/') || req.path.startsWith('/chat/') || req.path.startsWith('/user/')) {
-            return next();
-        }
-        res.sendFile(path.resolve(__dirname, '../frontend', 'dist', 'index.html'));
-    });
-} else {
-    // Development: Use EJS View Routes
-    app.use('/', viewRoutes);
-}
+// Serve Static Frontend Files (after API routes)
+const distPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(distPath));
+
+// Catch-all to serve index.html for React Router
+app.get('*', (req, res) => {
+    // If request is not an API call, serve React App
+    if (!req.path.startsWith('/auth') && !req.path.startsWith('/chat') && !req.path.startsWith('/user') && !req.path.startsWith('/health')) {
+        res.sendFile(path.join(distPath, 'index.html'), (err) => {
+            if (err) {
+                res.status(404).json({ success: false, message: "Frontend build not found. Run 'npm run build' in frontend folder." });
+            }
+        });
+    }
+});
 
 // Error Handler
 app.use(errorHandler);
