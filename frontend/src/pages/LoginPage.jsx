@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import { authService } from '../services/api';
 
-const OAUTH_BASE = 'http://localhost:3000/auth';
+const OAUTH_BASE = '/auth';
 
 const OAUTH_PROVIDERS = [
   {

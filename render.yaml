@@ -10,14 +10,26 @@ services:
       - key: PORT
         value: 10000
       - key: MONGODB_URI
-        sync: false # User must provide this
+        sync: false # Set in Render Dashboard
       - key: SESSION_SECRET
-        sync: false # User must provide this
+        sync: false # Set in Render Dashboard
       - key: JWT_SECRET
-        sync: false # User must provide this
+        sync: false # Set in Render Dashboard
+      
+      # AI Provider Keys
+      - key: GEMINI_API_KEY
+        sync: false
       - key: OPENAI_API_KEY
-        sync: false # optional
-      - key: GOOGLE_GEMINI_KEY
-        sync: false # optional
+        sync: false
+      
+      # URLs
+      - key: FRONTEND_URL
+        fromContext: RENDER_EXTERNAL_URL
       - key: BACKEND_URL
-        value: https://darkbot.onrender.com # Change this if your domain is different
+        fromContext: RENDER_EXTERNAL_URL
+      
+      # OAuth (Optional)
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false

@@ -21,7 +21,7 @@ async function callOpenAI(messages) {
 }
 
 async function callGemini(messages, attachments = []) {
-    const key = process.env.GEMINI_API_KEY;
+    const key = process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_KEY;
     if (!key || key.includes('your_gemini_api_key')) throw new Error('Gemini key missing.');
 
     // Models to try in order of preference

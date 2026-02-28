@@ -75,9 +75,9 @@ app.get('/health', (req, res) => {
 // ============================================
 
 // API Routes
-app.use('/auth', authRoutes);
-app.use('/chat', chatRoutes);
-app.use('/user', userRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/user', userRoutes);
 
 // Serve Static Frontend Files (after API routes)
 const distPath = path.join(__dirname, '../frontend/dist');
@@ -86,7 +86,7 @@ app.use(express.static(distPath));
 // Catch-all to serve index.html for React Router
 app.get('*', (req, res) => {
     // If request is not an API call, serve React App
-    if (!req.path.startsWith('/auth') && !req.path.startsWith('/chat') && !req.path.startsWith('/user') && !req.path.startsWith('/health')) {
+    if (!req.path.startsWith('/api') && !req.path.startsWith('/health')) {
         res.sendFile(path.join(distPath, 'index.html'));
     }
 });
